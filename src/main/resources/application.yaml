@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    password:
+    url: jdbc:mysql://127.0.0.1:3306/bda_dev
+    username: root
+  jpa:
+    hibernate:
+      ddl_auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+      show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+#  mvc:
+#    log-request-details: true
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: DEBUG
