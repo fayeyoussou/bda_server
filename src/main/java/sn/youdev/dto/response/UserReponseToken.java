@@ -9,11 +9,14 @@ public class UserReponseToken  {
     private String token;
     private Long id;
     private String login;
+    private String prenom;
     private String nom;
+//    private String email;
 
     public UserReponseToken(UserResponse userResponse, String token) {
         this.id = userResponse.getId();
         this.login = userResponse.getLogin();
+        this.prenom = userResponse.getPrenom();
         this.nom = userResponse.getNom();
         this.token = token;
     }

@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User,Long> {
     Optional<User> findByLoginOrInfoPerso_Email(String login, String email);
     Boolean existsByLogin(String login);
+
     Boolean existsByInfoPerso_Email(String email);
     List<User> findAllByNonLockedTrue();
 }

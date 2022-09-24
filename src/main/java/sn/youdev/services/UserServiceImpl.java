@@ -1,6 +1,7 @@
 package sn.youdev.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -185,6 +186,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByCredentials(String username) throws UserNotFoundException {
         return repo.findByLoginOrInfoPerso_Email(username,username).orElseThrow(()->new UserNotFoundException("user not found"));
+    }
+
+    @Override
+    public UserReponseToken getConnected(HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken userPA = (UsernamePasswordAuthenticationToken) request.getUserPrincipal();
+        UserResponse user = (UserResponse) userPA.getPrincipal();
+        String token = (String) userPA.getCredentials();
+        return new UserReponseToken(user,token);
     }
 
     @Override

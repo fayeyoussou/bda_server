@@ -30,4 +30,6 @@ public interface UserService extends UserDetailsService {
     String passwordResetRequest (String email,HttpServletRequest request) throws UserNotFoundException;
 
     User findByCredentials(String username) throws UserNotFoundException;
+
+    UserReponseToken getConnected(HttpServletRequest request);
 }

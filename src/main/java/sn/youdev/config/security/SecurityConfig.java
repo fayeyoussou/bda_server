@@ -41,8 +41,8 @@ public class SecurityConfig {
 
                     try {
                         auth
-                                .antMatchers("/api/auth**").permitAll()
-                                .antMatchers("/api/user/**").hasAuthority("CNTS")
+                                .antMatchers("/api/auth/**").permitAll()
+                                .antMatchers("/api/user/**").hasAuthority("cnts")
                                 .anyRequest().authenticated()
                                 .and()
                                 .sessionManagement()

@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static sn.youdev.config.Constante.jsonResponse;
@@ -38,7 +40,8 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             Token token = tokenOptional.get();
             if (token.getType()!=(byte)1) throw new EntreeException("token incorrect");
             User user = token.getUser();
-            UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(user.getLogin(),user,user.getAuthorities());
+            UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(user.getResponse(),token.getCode(),user.getAuthorities());
+//            userToken.getCredentials()
             SecurityContextHolder.getContext().setAuthentication(userToken);
             chain.doFilter(request,response);
 

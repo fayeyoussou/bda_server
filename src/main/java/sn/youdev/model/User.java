@@ -23,7 +23,7 @@ public class User implements UserDetails {
     private String login;
     @Column(nullable = false)
     private String password;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -38,6 +38,7 @@ public class User implements UserDetails {
     private boolean nonLocked = true;
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Token> tokens;
+
 
     public User(String login, String password, List<Role> roles, InfoPerso infoPerso) {
         this.login = login;
@@ -89,7 +90,6 @@ public class User implements UserDetails {
         return this.enabled;
     }
     public UserResponse getResponse(){
-
-        return new UserResponse(this.id,login, infoPerso.getPrenom()+infoPerso.getNom());
+        return new UserResponse(this.id,this.login, infoPerso.getPrenom(),infoPerso.getNom());
     }
 }

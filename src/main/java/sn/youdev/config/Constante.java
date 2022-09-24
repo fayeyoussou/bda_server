@@ -24,8 +24,8 @@ public class Constante {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-    public static final String[] WHITE_LIST = {
-            "/api/register/**"
+    public static final String[] CNTS_LIST = {
+            "/api/user/**"
     };
     public static ResponseEntity<Object> jsonResponse(Boolean status, Object obj, int statusCode, String message){
         Map<String, Object> response = new HashMap<>();
