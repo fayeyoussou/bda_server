@@ -22,4 +22,9 @@ public class BanqueUser {
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public BanqueUser(Banque banque, User user) {
+        this.banque = banque;
+        this.user = user;
+    }
 }

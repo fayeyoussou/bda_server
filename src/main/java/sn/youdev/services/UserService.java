@@ -2,10 +2,7 @@ package sn.youdev.services;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import sn.youdev.config.error.EntreeException;
-import sn.youdev.config.error.RoleNotFoundException;
-import sn.youdev.config.error.TokenNotFoundException;
-import sn.youdev.config.error.UserNotFoundException;
+import sn.youdev.config.error.*;
 import sn.youdev.dto.request.*;
 import sn.youdev.dto.response.*;
 import sn.youdev.model.User;
@@ -24,7 +21,10 @@ public interface UserService extends UserDetailsService {
     List<UserResponse> findAllUser() throws UserNotFoundException;
     UserResponse editUser (Long id, EditUserRequest editUserRequest) throws UserNotFoundException, EntreeException;
     Boolean blockUser (Long id) throws UserNotFoundException;
-    UserResponse editRoleUser(Long id, List<String> roles) throws UserNotFoundException, RoleNotFoundException;
+    UserResponse addBanqueRole(Long id,Long banque_id) throws RoleNotFoundException, UserNotFoundException, EntreeException, BanqueNotFoundException;
+    UserResponse addCntsRole(Long id) throws RoleNotFoundException, UserNotFoundException, EntreeException;
+    UserResponse addDoctorRole(Long id,Long hopital) throws UserNotFoundException, EntityNotFoundException, RoleNotFoundException, EntreeException;
+    UserResponse removeRole(Long id,String role) throws UserNotFoundException, RoleNotFoundException, EntreeException;
     UserResponse changePassword(Long id, ChangePasswordRequest changePasswordRequest) throws EntreeException, UserNotFoundException;
     UserResponse passwordReset(String token, ResetPasswordRequest resetPasswordRequest) throws TokenNotFoundException, EntreeException;
     String passwordResetRequest (String email,HttpServletRequest request) throws UserNotFoundException;

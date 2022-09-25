@@ -7,25 +7,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sn.youdev.config.Constante;
-import sn.youdev.config.error.EntreeException;
-import sn.youdev.config.error.RoleNotFoundException;
-import sn.youdev.config.error.TokenNotFoundException;
-import sn.youdev.config.error.UserNotFoundException;
+import sn.youdev.config.error.*;
 import sn.youdev.dto.request.*;
 import sn.youdev.dto.response.UserReponseToken;
 import sn.youdev.dto.response.UserResponse;
-import sn.youdev.model.InfoPerso;
-import sn.youdev.model.Role;
-import sn.youdev.model.Token;
-import sn.youdev.model.User;
-import sn.youdev.repository.InfoRepo;
-import sn.youdev.repository.RoleRepo;
-import sn.youdev.repository.TokenRepo;
-import sn.youdev.repository.UserRepo;
+import sn.youdev.model.*;
+import sn.youdev.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,14 +28,28 @@ public class UserServiceImpl implements UserService {
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
     private final TokenRepo tokenRepo;
+    private final BanqueRepo banqueRepo;
+    private final BanqueUserRepo banqueUserRepo;
+    private final HopitalRepo hopitalRepo;
+    private final MedecinHopitalRepo medecinHopitalRepo;
 
     @Autowired
-    public UserServiceImpl(UserRepo repo, InfoRepo infoRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder, TokenRepo tokenRepo) {
+    public UserServiceImpl(
+            UserRepo repo,
+            InfoRepo infoRepo,
+            RoleRepo roleRepo,
+            PasswordEncoder passwordEncoder,
+            TokenRepo tokenRepo,
+            BanqueRepo banqueRepo, BanqueUserRepo banqueUserRepo, HopitalRepo hopitalRepo, MedecinHopitalRepo medecinHopitalRepo) {
         this.repo = repo;
         this.infoRepo = infoRepo;
         this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepo = tokenRepo;
+        this.banqueRepo = banqueRepo;
+        this.banqueUserRepo = banqueUserRepo;
+        this.hopitalRepo = hopitalRepo;
+        this.medecinHopitalRepo = medecinHopitalRepo;
     }
 
     @Override
@@ -79,7 +83,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setInfoPerso(infoPerso);
         repo.save(user);
-        editRoleUser(user.getId(),registerRequest.getRoles());
         Token token = new Token((byte) 0,user);
         tokenRepo.save(token);
         return new UserReponseToken(user.getResponse(),Constante.applicationUrl(httpServletRequest)+"/api/auth/enable/"+token.getCode());
@@ -143,16 +146,54 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserResponse editRoleUser(Long id, List<String> roles) throws UserNotFoundException, RoleNotFoundException {
-        User user = findUser(id);
-        List<Role> roleArrayList = new ArrayList<>();
-        for (String role:roles
-             ) {
-            roleArrayList.add(roleRepo.findByNomIgnoreCase(role).orElseThrow(()->new RoleNotFoundException("role "+role+" not found")));
-        }
-        user.setRoles(roleArrayList);
+    public UserResponse addBanqueRole(Long id, Long banque_id) throws RoleNotFoundException, UserNotFoundException, EntreeException, BanqueNotFoundException {
+        Role role = roleRepo.findByNomIgnoreCase("banque").orElseThrow(()->new RoleNotFoundException("role banque found"));
+        User user =  findUser(id).addRoleToUser(role);
+        Banque banque = banqueRepo.findById(id).orElseThrow(()->new BanqueNotFoundException("banque not found"));
+        BanqueUser banqueUser = new BanqueUser(banque,user);
+        banqueUserRepo.save(banqueUser);
         return user.getResponse();
     }
+
+    @Transactional
+    @Override
+    public UserResponse addCntsRole(Long id) throws RoleNotFoundException, UserNotFoundException, EntreeException {
+        Role role = roleRepo.findByNomIgnoreCase("cnts").orElseThrow(()->new RoleNotFoundException("role banque found"));
+        return findUser(id).addRoleToUser(role).getResponse();
+    }
+    @Transactional
+    @Override
+    public UserResponse addDoctorRole(Long id, Long hopitalId) throws UserNotFoundException, EntityNotFoundException, RoleNotFoundException, EntreeException {
+        User user = findUser(id);
+        if(hopitalId!=0){
+            Hopital hopital = hopitalRepo.findById(hopitalId).orElseThrow(()->new EntityNotFoundException("hôpital not found"));
+            MedecinHopital medecinHopital = new MedecinHopital(hopital,user);
+            medecinHopitalRepo.save(medecinHopital);
+        }
+        Role role = roleRepo.findByNomIgnoreCase("medecin").orElseThrow(()->new RoleNotFoundException("role banque found"));
+        return findUser(id).addRoleToUser(role).getResponse();
+
+    }
+
+    @Override
+    public UserResponse removeRole(Long id, String roleName) throws UserNotFoundException, RoleNotFoundException, EntreeException {
+        User user = findUser(id);
+        Role role = roleRepo.findByNomIgnoreCase(roleName).orElseThrow(()->new RoleNotFoundException("role "+roleName+" non trouvee"));
+        user.deleteRoleFromUser(role);
+        if(Objects.equals(roleName, "banque")){
+            BanqueUser banqueUser = banqueUserRepo.findByUser(user).orElse(null);
+            if(banqueUser != null){
+                banqueUserRepo.delete(banqueUser);
+            }
+        } else if (Objects.equals(roleName, "medecin")) {
+            MedecinHopital medecinHopital = medecinHopitalRepo.findByUser(user).orElse(null);
+            if (medecinHopital!=null){
+                medecinHopitalRepo.delete(medecinHopital);
+            }
+        }
+        return user.getResponse();
+    }
+
 
     @Transactional
     @Override

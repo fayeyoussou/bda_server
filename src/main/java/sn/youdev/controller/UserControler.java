@@ -2,16 +2,10 @@ package sn.youdev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import sn.youdev.config.error.EntreeException;
-import sn.youdev.config.error.RoleNotFoundException;
-import sn.youdev.config.error.UserNotFoundException;
+import sn.youdev.config.error.*;
 import sn.youdev.dto.request.ChangePasswordRequest;
 import sn.youdev.dto.request.EditUserRequest;
-import sn.youdev.dto.response.UserReponseToken;
-import sn.youdev.dto.response.UserResponse;
-import sn.youdev.model.User;
 import sn.youdev.services.UserService;
 
 import javax.persistence.GeneratedValue;
@@ -42,14 +36,23 @@ public class UserControler {
         return jsonResponse(true,userService.editUser(id,request),200,"edit successful");
     }
     @PostMapping("/block/{id}")
-    public ResponseEntity<?> blockUser(@PathVariable("id") final Long id){
+    public ResponseEntity<?> blockUser(@PathVariable("id") final Long id) throws UserNotFoundException {
+        userService.blockUser(id);
         Map<String,Boolean> map = new HashMap<>();
         map.put("status",true);
         return ResponseEntity.ok(map);
     }
-    @PostMapping("/role/{id}")
-    public ResponseEntity<?> changeRoleUser(@PathVariable("id") final Long id, @RequestBody final List<String> roles) throws UserNotFoundException, RoleNotFoundException {
-        return jsonResponse(true,userService.editRoleUser(id,roles),200,"the role have been changed");
+    @GetMapping("/role/medecin/{id}/{idHopital}")
+    public ResponseEntity<?> addMedecinRole(@PathVariable("id") final Long id,@PathVariable("idHopital") final Long idHopital) throws UserNotFoundException, EntreeException, RoleNotFoundException, EntityNotFoundException {
+        return jsonResponse(true,userService.addDoctorRole(id,idHopital),200,"role added");
+    }
+    @GetMapping("/role/banque/{id}/{idBanque}")
+    public ResponseEntity<?> addBanqueRole(@PathVariable("id") final Long id,@PathVariable("idBanque") final Long idBanque) throws UserNotFoundException, EntreeException, RoleNotFoundException, BanqueNotFoundException {
+        return jsonResponse(true,userService.addBanqueRole(id,idBanque),200,"role added");
+    }
+    @GetMapping("/role/cnts/{id}")
+    public ResponseEntity<?> addCntsRole(@PathVariable("id") final Long id) throws UserNotFoundException, EntreeException, RoleNotFoundException {
+        return jsonResponse(true,userService.addCntsRole(id),200,"role added");
     }
     @PostMapping("/password/{id}")
     public ResponseEntity<?> changePassword(@PathVariable("id") final Long id, @RequestBody @Valid ChangePasswordRequest request) throws UserNotFoundException, EntreeException {

@@ -45,6 +45,5 @@ public class RegisterRequest {
     private String password;
     @NotBlank(message = "ne doit pas être vide") @NotEmpty(message = "ne doit pas être vide") @NotNull(message = "ne doit pas être vide")
     private String confirmation;
-    @NotEmpty(message = "ne doit pas être vide") @NotNull(message = "ne doit pas être vide")
-    private List<String> roles;
+
 }

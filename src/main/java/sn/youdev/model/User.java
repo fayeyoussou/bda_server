@@ -8,6 +8,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import sn.youdev.config.error.EntreeException;
 import sn.youdev.dto.response.UserResponse;
 
 import javax.persistence.*;
@@ -62,6 +63,16 @@ public class User implements UserDetails {
 
         return authorities;
     }
+    public User addRoleToUser(Role role) throws EntreeException {
+        if(this.roles.contains(role)) throw new EntreeException("role already added");
+        else this.roles.add(role);
+        return this;
+    }
+    public User deleteRoleFromUser(Role role) throws EntreeException {
+        if (this.roles.contains(role)) this.roles.remove(role);
+        else throw new EntreeException("user does not have this role");
+        return this;
+    }
 
     @Override
     public String getPassword() {
@@ -93,6 +104,13 @@ public class User implements UserDetails {
         return this.enabled;
     }
     public UserResponse getResponse(){
-        return new UserResponse(this.id,this.login, infoPerso.getPrenom(),infoPerso.getNom());
+        List<String>roles = new ArrayList<>();
+        if(!this.roles.isEmpty()){
+            for (Role role:this.roles
+                 ) {
+                roles.add(role.getNom());
+            }
+        }
+        return new UserResponse(this.id,this.login, infoPerso.getPrenom(),infoPerso.getNom(),roles);
     }
 }

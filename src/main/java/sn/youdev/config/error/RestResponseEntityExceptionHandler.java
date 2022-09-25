@@ -24,7 +24,7 @@ import java.util.Map;
 public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler
 {
-    @ExceptionHandler({RoleNotFoundException.class,TokenNotFoundException.class,UsernameNotFoundException.class,UserNotFoundException.class})
+    @ExceptionHandler({EntityNotFoundException.class,BanqueNotFoundException.class,RoleNotFoundException.class,TokenNotFoundException.class,UsernameNotFoundException.class,UserNotFoundException.class})
     public ResponseEntity<?> NotFoundException(Exception e){
         return Constante.jsonResponse(false,e.getClass().getSimpleName(),404,e.getMessage());
     }
