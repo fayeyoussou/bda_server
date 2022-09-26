@@ -33,7 +33,7 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
     @OneToOne(optional = false,fetch = FetchType.EAGER)
     @MapsId
     @JoinColumn(name = "user_id")
@@ -105,7 +105,7 @@ public class User implements UserDetails {
     }
     public UserResponse getResponse(){
         List<String>roles = new ArrayList<>();
-        if(!this.roles.isEmpty()){
+        if(this.roles != null){
             for (Role role:this.roles
                  ) {
                 roles.add(role.getNom());

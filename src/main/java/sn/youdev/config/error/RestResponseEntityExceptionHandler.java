@@ -32,7 +32,10 @@ public class RestResponseEntityExceptionHandler
     public ResponseEntity<?> entreeException(EntreeException e){
         return Constante.jsonResponse(false,e.getClass().getSimpleName(),400,e.getMessage());
     }
-
+    @ExceptionHandler(TestException.class)
+    public ResponseEntity<?> Test(TestException e){
+        return Constante.jsonResponse(false,e,400,e.getClass().getSimpleName());
+    }
     @Override
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {

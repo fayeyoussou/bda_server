@@ -42,4 +42,11 @@ public class Token {
         this.expiration = Constante.calculateExp(this.type == 1 ? 60*24*30 : 10);
         this.code = RandomStringUtils.randomAlphanumeric(60).toLowerCase();
     }
+
+    public Token(byte type, User user, int i) {
+        this.type = type;
+        this.user = user;
+        this.expiration = Constante.calculateExp(60*24*i);
+        this.code = RandomStringUtils.randomAlphanumeric(60).toLowerCase();
+    }
 }

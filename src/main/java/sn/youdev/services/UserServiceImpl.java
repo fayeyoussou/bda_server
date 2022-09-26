@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService {
         return findUser(id).getResponse();
     }
     private void verifyEntry(RegisterRequest registerRequest) throws EntreeException {
-        if(!Objects.equals(registerRequest.getPassword(), registerRequest.getConfirmation())) throw new EntreeException("mot de passe non conforme");
         if(repo.existsByLogin(registerRequest.getLogin().toLowerCase())) throw new EntreeException("le login existe deja");
         if(repo.existsByInfoPerso_Email(registerRequest.getEmail().toLowerCase())) throw new EntreeException("le mail existe deja");
         if(infoRepo.findByEmailIgnoreCase(registerRequest.getEmail()).isPresent()) throw new EntreeException("1");
@@ -72,18 +71,21 @@ public class UserServiceImpl implements UserService {
         if (infoRepo.findByTelephone(registerRequest.getTelephone()).isPresent()) throw  new EntreeException("3");
     }
 
+    @Transactional
     @Override
     public UserReponseToken saveUser(RegisterRequest  registerRequest, HttpServletRequest httpServletRequest) throws EntreeException, UserNotFoundException, RoleNotFoundException {
         verifyEntry(registerRequest);
         InfoPerso infoPerso = new InfoPerso();
         infoPerso.setInfoPerso(registerRequest);
-        infoRepo.save(infoPerso);
+
         User user = new User();
         user.setLogin(registerRequest.getLogin());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setPassword(passwordEncoder.encode("passer123"));
         user.setInfoPerso(infoPerso);
-        repo.save(user);
+
         Token token = new Token((byte) 0,user);
+        infoRepo.save(infoPerso);
+        repo.save(user);
         tokenRepo.save(token);
         return new UserReponseToken(user.getResponse(),Constante.applicationUrl(httpServletRequest)+"/api/auth/enable/"+token.getCode());
     }
@@ -101,18 +103,6 @@ public class UserServiceImpl implements UserService {
         tokenRepo.save(tokenAccess);
         return new UserReponseToken(userResponse,tokenAccess.getCode());
     }
-
-    @Override
-    public UserResponse saveUserWithExistInfo(UserRequest userRequest) {
-        return null;
-    }
-
-//    @Override
-//    public UserResponse saveUserWithExistInfo(RegisterRequest registerRequest) throws EntreeException {
-//        verifyEntry(registerRequest);
-//
-//        return null;
-//    }
 
     @Override
     public List<UserResponse> findAllUser() throws UserNotFoundException {
@@ -218,6 +208,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String passwordResetRequest(String email,HttpServletRequest request) throws UserNotFoundException {
+        System.out.println(email);
+        System.out.println("dadsasa");
         User user = infoRepo.findByEmailIgnoreCase(email).orElseThrow(()->new UserNotFoundException("user not found")).getUser();
         Token token = new Token((byte) 2,user);
         tokenRepo.save(token);

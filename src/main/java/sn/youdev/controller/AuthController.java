@@ -9,6 +9,7 @@ import sn.youdev.config.error.EntreeException;
 import sn.youdev.config.error.RoleNotFoundException;
 import sn.youdev.config.error.TokenNotFoundException;
 import sn.youdev.config.error.UserNotFoundException;
+import sn.youdev.dto.request.EmailRequest;
 import sn.youdev.dto.request.RegisterRequest;
 import sn.youdev.dto.request.ResetPasswordRequest;
 import sn.youdev.services.UserService;
@@ -20,7 +21,7 @@ import static sn.youdev.config.Constante.jsonResponse;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController extends BaseController {
     private final UserService userService;
 
     @Autowired
@@ -28,20 +29,20 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid final RegisterRequest registerRequest, final HttpServletRequest request) throws UserNotFoundException, EntreeException, RoleNotFoundException{
-             return jsonResponse(true,userService.saveUser( registerRequest,request),200,"user saved");
+             return controllerResponse(userService.saveUser( registerRequest,request),"user saved");
     }
     @GetMapping("/enable/{token}")
     public ResponseEntity<?> enableUser(@PathVariable("token") @Valid final @Length(min = 60,max = 60) String token) throws EntreeException, TokenNotFoundException {
-        return jsonResponse(true,userService.enableUser(token),200,"utilisateur valide");
+        return controllerResponse(userService.enableUser(token),"utilisateur valide");
     }
     @PostMapping("/reset/password")
-    public ResponseEntity<?> requestPasswordReset(@RequestBody final String email,HttpServletRequest request) throws UserNotFoundException {
-        return jsonResponse(true,userService.passwordResetRequest(email,request),200,"mail sended to you for reset");
+    public ResponseEntity<?> requestPasswordReset(@RequestBody final EmailRequest emailRequest, HttpServletRequest request) throws UserNotFoundException {
+        return controllerResponse(userService.passwordResetRequest(emailRequest.getEmail(),request),"mail sended to you for reset");
     }
     @PostMapping("/reset/{token}")
     public ResponseEntity<?> resetPassword(@PathVariable("token") final String token, @RequestBody @Valid final ResetPasswordRequest request) throws EntreeException, TokenNotFoundException {
-        return jsonResponse(true,userService.passwordReset(token,request),200,"password reseted");
+        return controllerResponse(userService.passwordReset(token,request),"password reseted");
     }
 }

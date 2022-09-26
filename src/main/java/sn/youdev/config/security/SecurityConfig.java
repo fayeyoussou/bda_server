@@ -16,6 +16,8 @@ import sn.youdev.config.security.handler.AuthenticationFailHandler;
 import sn.youdev.config.security.handler.AuthenticationSuccessHandler;
 import sn.youdev.repository.TokenRepo;
 
+import static sn.youdev.config.Constante.*;
+
 @Configuration
 public class SecurityConfig {
     private final AuthenticationManager authenticationManager;
@@ -41,8 +43,10 @@ public class SecurityConfig {
 
                     try {
                         auth
+                                .antMatchers(AUTH_LIST).authenticated()
                                 .antMatchers("/api/auth/**").permitAll()
-                                .antMatchers("/api/user/**").hasAuthority("cnts")
+                                .antMatchers(ADMIN_LIST).hasAuthority("admin")
+                                .antMatchers(CNTS_LIST).hasAuthority("cnts")
                                 .anyRequest().authenticated()
                                 .and()
                                 .sessionManagement()

@@ -19,7 +19,7 @@ public class ChangePasswordRequest {
     @Pattern(regexp = "[\\w\\W]{8,}",message = "au moins 8 caractères")
     @Pattern(regexp = "[\\w\\W]{0,20}",message = "au plus 20 caractères")
     @Pattern(regexp = "^[\\w\\W]+$" , message = "les caractères spéciales non autorise")
-    @Pattern(regexp = "^(?!.*__.*)[a-z][a-z0-9_]+$" , message = "deux underscore successif non autorise")
+    @Pattern(regexp = "^(?!.*__.*)(?!.*--.*)(?!.*-_.*)(?!.*_-.*)[a-zA-Z][a-zA-Z0-9_-]+$" , message = "deux tiré successif non autorise")
     private String newPassword;
     @NotEmpty
     @NotBlank
