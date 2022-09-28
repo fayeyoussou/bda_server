@@ -33,6 +33,9 @@ public class InfoPerso {
     @OneToOne(mappedBy = "infoPerso",cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private User user;
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "image_id")
+    private File image;
     public void setInfoPerso(RegisterRequest registerRequest){
         this.cin=registerRequest.getCin();
         this.email=registerRequest.getEmail();

@@ -8,6 +8,7 @@ import sn.youdev.config.Constante;
 import sn.youdev.dto.response.DonneurResponse;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ public class Donneur {
     @JoinColumn(name = "groupe")
     private GroupeSanguin groupeSanguin;
     @OneToMany(mappedBy = "donneur")
-    private List<Don> dons;
+    private List<Don> dons = new ArrayList<>();
     private Boolean active =  true;
 
     public Donneur(InfoPerso infoPerso, GroupeSanguin groupeSanguin, List<Don> dons) {
@@ -52,7 +53,7 @@ public class Donneur {
         return calendar2.getTime();
     }
     public DonneurResponse getDonneurResponse(){
-        return new DonneurResponse(this.numero,this.infoPerso.getPrenom(),this.infoPerso.getNom(),this.getDateDernierDon(),this.getPeutDonner());
+        return new DonneurResponse(this.numero,this.infoPerso.getPrenom(),this.infoPerso.getNom(),this.getDateDernierDon(),this.getPeutDonner(),this.dons==null ? 0 :this.dons.size());
     }
     public Donneur generateNumero(){
         this.numero = Constante.generateNumero("DO");

@@ -1,4 +1,7 @@
 spring:
+  servlet:
+    multipart:
+      enabled: true
   datasource:
     password:
     url: jdbc:mysql://127.0.0.1:3306/bda_dev

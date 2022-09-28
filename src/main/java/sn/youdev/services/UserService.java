@@ -2,20 +2,20 @@ package sn.youdev.services;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import sn.youdev.config.error.*;
 import sn.youdev.dto.request.*;
 import sn.youdev.dto.response.*;
 import sn.youdev.model.User;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public interface UserService extends UserDetailsService {
     User findUser(Long id) throws UserNotFoundException;
     UserResponse findById (Long id) throws UserNotFoundException;
-    UserReponseToken saveUser(RegisterRequest registerRequest, HttpServletRequest httpServletRequest) throws EntreeException, UserNotFoundException, RoleNotFoundException;
+    UserReponseToken saveUser(RegisterRequest registerRequest, MultipartFile image, HttpServletRequest httpServletRequest) throws EntreeException, UserNotFoundException, RoleNotFoundException, IOException;
     UserReponseToken enableUser(String token) throws TokenNotFoundException, EntreeException;
 
     List<UserResponse> findAllUser() throws UserNotFoundException;

@@ -13,12 +13,14 @@ public class DonneurResponse {
     private String nom;
     private String dateDernierDon;
     private Boolean peutDonner;
-
-    public DonneurResponse(String numeroDonneur, String prenom, String nom, Date dateDernierDon, Boolean peutDonner) {
+    private int numberDon;
+    public DonneurResponse(String numeroDonneur, String prenom, String nom, Date dateDernierDon, Boolean peutDonner,int numberDon) {
         this.numeroDonneur = numeroDonneur;
         this.prenom = prenom;
         this.nom = nom;
         this.dateDernierDon = dateDernierDon == null ? "pas de don":dateDernierDon.toString();
         this.peutDonner = peutDonner;
+        this.numberDon = numberDon;
+
     }
 }

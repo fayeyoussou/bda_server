@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import sn.youdev.config.Constante;
 import sn.youdev.config.error.*;
 import sn.youdev.dto.request.*;
@@ -16,6 +17,7 @@ import sn.youdev.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final BanqueUserRepo banqueUserRepo;
     private final HopitalRepo hopitalRepo;
     private final MedecinHopitalRepo medecinHopitalRepo;
+    private final FileRepo fileRepo;
+
 
     @Autowired
     public UserServiceImpl(
@@ -40,7 +44,7 @@ public class UserServiceImpl implements UserService {
             RoleRepo roleRepo,
             PasswordEncoder passwordEncoder,
             TokenRepo tokenRepo,
-            BanqueRepo banqueRepo, BanqueUserRepo banqueUserRepo, HopitalRepo hopitalRepo, MedecinHopitalRepo medecinHopitalRepo) {
+            BanqueRepo banqueRepo, BanqueUserRepo banqueUserRepo, HopitalRepo hopitalRepo, MedecinHopitalRepo medecinHopitalRepo, FileRepo fileRepo) {
         this.repo = repo;
         this.infoRepo = infoRepo;
         this.roleRepo = roleRepo;
@@ -50,6 +54,7 @@ public class UserServiceImpl implements UserService {
         this.banqueUserRepo = banqueUserRepo;
         this.hopitalRepo = hopitalRepo;
         this.medecinHopitalRepo = medecinHopitalRepo;
+        this.fileRepo = fileRepo;
     }
 
     @Override
@@ -73,19 +78,21 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserReponseToken saveUser(RegisterRequest  registerRequest, HttpServletRequest httpServletRequest) throws EntreeException, UserNotFoundException, RoleNotFoundException {
+    public UserReponseToken saveUser(RegisterRequest  registerRequest, MultipartFile image, HttpServletRequest httpServletRequest) throws EntreeException, IOException {
         verifyEntry(registerRequest);
         InfoPerso infoPerso = new InfoPerso();
         infoPerso.setInfoPerso(registerRequest);
-
         User user = new User();
         user.setLogin(registerRequest.getLogin());
         user.setPassword(passwordEncoder.encode("passer123"));
         user.setInfoPerso(infoPerso);
-
+        File file = new File(image);
+        fileRepo.save(file);
         Token token = new Token((byte) 0,user);
+        infoPerso.setImage(file);
         infoRepo.save(infoPerso);
         repo.save(user);
+        file.setOwner(user);
         tokenRepo.save(token);
         return new UserReponseToken(user.getResponse(),Constante.applicationUrl(httpServletRequest)+"/api/auth/enable/"+token.getCode());
     }

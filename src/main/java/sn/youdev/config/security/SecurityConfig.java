@@ -44,7 +44,7 @@ public class SecurityConfig {
                     try {
                         auth
                                 .antMatchers(AUTH_LIST).authenticated()
-                                .antMatchers("/api/auth/**").permitAll()
+                                .antMatchers("/api/auth/**","/api/test/**").permitAll()
                                 .antMatchers(ADMIN_LIST).hasAuthority("admin")
                                 .antMatchers(CNTS_LIST).hasAuthority("cnts")
                                 .anyRequest().authenticated()

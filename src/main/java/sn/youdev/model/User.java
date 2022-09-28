@@ -43,7 +43,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Token> tokens;
 
-
     public User(String login, String password, List<Role> roles, InfoPerso infoPerso) {
         this.login = login;
         this.password = password;

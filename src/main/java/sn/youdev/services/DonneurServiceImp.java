@@ -87,7 +87,7 @@ public class DonneurServiceImp implements DonneurService {
             infos.setTelephone(donneurRequest.getTelephone());
             infos.setNumeroDonneur(donneur);
             infoRepo.save(infos);
-            return new DonneurResponse(donneur.getNumero(),infos.getPrenom(),infos.getNom(),donneur.getDateDernierDon(),true);
+            return new DonneurResponse(donneur.getNumero(),infos.getPrenom(),infos.getNom(),donneur.getDateDernierDon(),true,donneur.getDons().size());
         }catch (Exception e){
             log.error(e.getMessage(),e);
             throw new TestException(e);
@@ -131,7 +131,7 @@ public class DonneurServiceImp implements DonneurService {
         repo.save(donneur);
         infos.setNumeroDonneur(donneur);
         infoRepo.save(infos);
-        map.put("donneur_info",new DonneurResponse(donneur.getNumero(),infos.getPrenom(),infos.getNom(),donneur.getDateDernierDon(),true));
+        map.put("donneur_info",new DonneurResponse(donneur.getNumero(),infos.getPrenom(),infos.getNom(),donneur.getDateDernierDon(),true,donneur.getDons().size()));
         map.put("user_info",infos.getUser().getResponse());
         return map;
         }

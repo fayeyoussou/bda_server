@@ -1,13 +1,18 @@
 package sn.youdev.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.util.List;
 
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RegisterRequest {
     @Email(message = "format e-mail non valide") @NotNull(message = "ne doit pas être vide")
     private String email;
@@ -32,6 +37,7 @@ public class RegisterRequest {
     @Length(min = 5,max = 20,message = "la taille de caractère doit être entre 5 et 20")
     @Pattern(regexp = "^(?=[a-zA-Z\\d._-]*$)(?!.*[_.]{2})[^_.].*[^_.]$",message = "ne doit contenir de caractère special  a part _ , .,-")
     private String login;
+
 //    @NotBlank(message = "ne doit pas être vide") @NotEmpty(message = "ne doit pas être vide")
 ////    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$",message = "format mot de passe invalide")
 ////    @Pattern(regexp = "^(?=[a-zA-Z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",message = "format mot de passe invalide")

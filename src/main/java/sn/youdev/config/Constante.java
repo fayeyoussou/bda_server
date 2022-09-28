@@ -4,12 +4,24 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import sn.youdev.dto.response.UserReponseToken;
+import sn.youdev.dto.response.UserResponse;
+import sn.youdev.model.File;
+import sn.youdev.model.User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +49,7 @@ public class Constante {
     public static final String[] AUTH_LIST = {
             "/api/user/password",
     };
+    public static final String ASSETS = "src/main/java/sn/youdev/assets";
     public static ResponseEntity<Object> jsonResponse(Boolean status, Object obj, int statusCode, String message){
         Map<String, Object> response = new HashMap<>();
         response.put("status",status);
@@ -49,12 +62,14 @@ public class Constante {
         if (message !=null && !message.equals("")) response.put("message",message);
         return ResponseEntity.status(statusCode).body(response);
     }
+
     public static Date calculateExp(int minutes){
         Calendar calendar  = Calendar.getInstance();
         calendar.setTimeInMillis(new Date().getTime());
         calendar.add(Calendar.MINUTE,minutes);
         return calendar.getTime();
     }
+
 
     public static String applicationUrl(HttpServletRequest httpRequest) {
         return "http://"+httpRequest.getServerName()+":"+httpRequest.getServerPort()+httpRequest.getContextPath();
@@ -69,5 +84,8 @@ public class Constante {
                 +RandomStringUtils.randomAlphanumeric(2)
                 +(year%100)+RandomStringUtils.randomAlphanumeric(2)
                 +(month<10 ? month+RandomStringUtils.randomAlphabetic(1):month);
+    }
+    public static String getExtension(String fileName){
+        return (String) fileName.subSequence(fileName.lastIndexOf("."),fileName.length());
     }
 }
