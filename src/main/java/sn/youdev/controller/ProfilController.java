@@ -1,6 +1,7 @@
 package sn.youdev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +24,9 @@ public class ProfilController extends BaseController{
     @GetMapping
     public ResponseEntity<?>getConnected(HttpServletRequest request) throws UserNotFoundException {
         return controllerResponse(service.VoirProfilUser(request));
+    }
+    @GetMapping("/donneur")
+    public ResponseEntity<?>getDonneur(HttpServletRequest request) throws UserNotFoundException {
+        return controllerResponse(service.VoirProfilDonneur(request));
     }
 }

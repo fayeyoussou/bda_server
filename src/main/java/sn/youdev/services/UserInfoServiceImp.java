@@ -10,10 +10,12 @@ import sn.youdev.dto.request.EmailRequest;
 import sn.youdev.dto.request.LoginChangeRequest;
 import sn.youdev.dto.request.StringRequest;
 import sn.youdev.dto.response.*;
+import sn.youdev.model.Don;
 import sn.youdev.model.InfoPerso;
 import sn.youdev.model.User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class UserInfoServiceImp implements UserInfoService {
@@ -34,18 +36,29 @@ public class UserInfoServiceImp implements UserInfoService {
         userResponsePerso.setPrenom(infos.getPrenom());
         userResponsePerso.setNom(infos.getNom());
         userResponsePerso.setTelephone(infos.getTelephone());
-        userResponsePerso.setImage(Constante.applicationUrl(request)+"/file/"+infos.getImage().getNom());
+        userResponsePerso.setImage(Constante.applicationUrl(request)+"/api/file/"+infos.getImage().getNom());
         return userResponsePerso;
     }
 
     @Override
-    public DonneurResponse VoirProfilDonneur(HttpServletRequest request) {
-        return null;
+    public DonneurResponse VoirProfilDonneur(HttpServletRequest request) throws UserNotFoundException {
+        User user =userService.findUser(userService.getConnected(request).getId());
+        return user.getInfoPerso().getNumeroDonneur().getDonneurResponse();
     }
 
     @Override
-    public List<DonResponse> voisMesDons(HttpServletRequest request) {
-        return null;
+    public List<DonResponse> voisMesDons(HttpServletRequest request) throws UserNotFoundException {
+        User user =userService.findUser(userService.getConnected(request).getId());
+        List<Don> dons = user.getInfoPerso().getNumeroDonneur().getDons();
+
+        List<DonResponse> donResponses = new ArrayList<>();
+        if(dons!=null) {
+            for (Don don :
+                    dons) {
+                donResponses.add(don.getDonResponse());
+            }
+        }
+        return donResponses;
     }
 
     @Override

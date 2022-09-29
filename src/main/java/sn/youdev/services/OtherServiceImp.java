@@ -8,10 +8,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.controller.BaseController;
 import sn.youdev.dto.response.UserReponseToken;
+import sn.youdev.dto.response.UserResponse;
 import sn.youdev.model.File;
 import sn.youdev.repository.FileRepo;
 
@@ -57,10 +59,14 @@ public class OtherServiceImp implements OtherService {
             System.out.println("Started here ------->");
             File file = fileRepo.findByNom(nom).orElseThrow(() -> new EntityNotFoundException("file not found"));
             System.out.println("=====================");
-            System.out.println(file.getNom());
-            UserReponseToken requester = userService.getConnected(request);
+
+            System.out.println(request.getUserPrincipal());
+//            UserResponse requester = request.getUserPrincipal();
             System.out.println("=====================");
-            System.out.println(requester.getRoles());
+            UsernamePasswordAuthenticationToken userPA = (UsernamePasswordAuthenticationToken) request.getUserPrincipal();
+            UserResponse requester = (UserResponse) userPA.getPrincipal();
+//            System.out.println(requester.getRoles());
+//            return ResponseEntity.ok(userPA);
             if (Objects.equals(file.getOwner().getId(), requester.getId()) || requester.getRoles().contains("admin")) {
                 downloadFile(file);
                 System.out.println("=====================");

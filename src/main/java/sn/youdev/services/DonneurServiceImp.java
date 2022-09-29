@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sn.youdev.config.Constante;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.config.error.EntreeException;
@@ -20,7 +21,7 @@ import sn.youdev.model.User;
 import sn.youdev.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+
 import java.util.*;
 
 @Service
@@ -114,7 +115,7 @@ public class DonneurServiceImp implements DonneurService {
     public Boolean deleteDonneur(String numero) throws EntityNotFoundException {
         Donneur donneur = findDonneur(numero);
         donneur.setActive(false);
-        donneur.setInfoPerso(null);
+        donneur.getInfoPerso().setNumeroDonneur(null);
         return true;
     }
     @Override

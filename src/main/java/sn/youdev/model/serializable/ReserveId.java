@@ -9,6 +9,6 @@ import java.io.Serializable;
 
 @Getter @Setter
 public class ReserveId implements Serializable {
-    private Banque banque;
-    private GroupeSanguin groupeSanguin;
+    private Long banque_id;
+    private String groupe_id;
 }

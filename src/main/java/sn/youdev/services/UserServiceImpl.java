@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sn.youdev.config.Constante;
 import sn.youdev.config.error.*;
@@ -16,7 +17,7 @@ import sn.youdev.model.*;
 import sn.youdev.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

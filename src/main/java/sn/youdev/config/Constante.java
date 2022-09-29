@@ -79,11 +79,11 @@ public class Constante {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        return start
+        return (start
                 +(day<10? RandomStringUtils.randomAlphabetic(1)+day:day)
                 +RandomStringUtils.randomAlphanumeric(2)
                 +(year%100)+RandomStringUtils.randomAlphanumeric(2)
-                +(month<10 ? month+RandomStringUtils.randomAlphabetic(1):month);
+                +(month<10 ? month+RandomStringUtils.randomAlphabetic(1):month)).toUpperCase();
     }
     public static String getExtension(String fileName){
         return (String) fileName.subSequence(fileName.lastIndexOf("."),fileName.length());

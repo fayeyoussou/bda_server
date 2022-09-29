@@ -22,7 +22,7 @@ public class Donneur {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "groupe")
     private GroupeSanguin groupeSanguin;
-    @OneToMany(mappedBy = "donneur")
+    @OneToMany(mappedBy = "donneur",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Don> dons = new ArrayList<>();
     private Boolean active =  true;
 

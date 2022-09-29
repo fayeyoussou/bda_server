@@ -12,11 +12,11 @@ import sn.youdev.dto.response.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Service
+
 public interface UserInfoService {
     UserResponsePerso VoirProfilUser(HttpServletRequest request) throws UserNotFoundException;
-    DonneurResponse VoirProfilDonneur(HttpServletRequest request);
-    List<DonResponse> voisMesDons(HttpServletRequest request);
+    DonneurResponse VoirProfilDonneur(HttpServletRequest request) throws UserNotFoundException;
+    List<DonResponse> voisMesDons(HttpServletRequest request) throws UserNotFoundException;
     DonResponse voirDon(HttpServletRequest request,String numero);
     UserReponseToken changeMailRequete(HttpServletRequest request, EmailRequest emailRequest);
     UserReponseToken changePhone(HttpServletRequest request,StringRequest stringWithPhone);
