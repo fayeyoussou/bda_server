@@ -31,7 +31,7 @@ public class LocalisationServiceImp implements LocalisationService {
     }
 
     @Override
-    public Object getLocalisation(Long id) throws EntityNotFoundException {
+    public Localisation getLocalisation(Long id) throws EntityNotFoundException {
         return repo.findById(id).orElseThrow(()->new EntityNotFoundException("positition non trouve"));
     }
 

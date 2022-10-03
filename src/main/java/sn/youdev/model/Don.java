@@ -3,6 +3,7 @@ package sn.youdev.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import sn.youdev.config.Constante;
 import sn.youdev.dto.response.DonResponse;
 import sn.youdev.model.serializable.EtatDon;
 
@@ -42,6 +43,7 @@ public class Don {
         this.observation = observation;
         this.donneur = donneur;
         this.banque = banque;
+        this.numero = Constante.generateNumero("DN");
     }
 
     public DonResponse getDonResponse(){

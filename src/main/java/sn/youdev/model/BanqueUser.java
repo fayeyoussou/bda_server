@@ -15,15 +15,24 @@ import javax.persistence.*;
 @IdClass(BanqueUserId.class)
 public class BanqueUser {
     @Id
+    @Column(name = "banque_id")
+    private Long banque_id;
+    @Id
+    @Column(name = "user_id")
+    private Long user_id;
+
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @MapsId
     @JoinColumn(name = "banque_id")
     private Banque banque;
-    @Id
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 
     public BanqueUser(Banque banque, User user) {
+        this.banque_id = banque.getId();
+        this.user_id = user.getId();
         this.banque = banque;
         this.user = user;
     }

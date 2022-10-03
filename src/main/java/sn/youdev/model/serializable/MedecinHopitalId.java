@@ -8,8 +8,8 @@ import sn.youdev.model.User;
 import java.io.Serializable;
 @Getter @Setter
 public class MedecinHopitalId implements Serializable {
-    private User user;
-    private Hopital hopital;
+    private Long user_id;
+    private Long hopital_id;
 
     public MedecinHopitalId() {
         super();

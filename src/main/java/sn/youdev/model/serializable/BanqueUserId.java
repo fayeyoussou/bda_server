@@ -10,13 +10,12 @@ import java.util.Objects;
 
 @Getter @Setter
 public class BanqueUserId implements Serializable {
-    private Banque banque;
-    private User user;
+    private Long banque_id;
+    private User user_id;
 
     @Override
     public boolean equals(Object obj) {
-        BanqueUserId  ban = (BanqueUserId) obj;
-        return Objects.equals(this.banque.getId(), ban.getBanque().getId()) && Objects.equals(this.user.getId(), ban.getUser().getId());
+        return super.equals(obj);
     }
 
     @Override
