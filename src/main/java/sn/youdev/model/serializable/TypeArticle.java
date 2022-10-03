@@ -1,5 +1,5 @@
 package sn.youdev.model.serializable;
 
 public enum TypeArticle {
-    SENSIBILISATION,ALERT,JOURNÉE,
+    SENSIBILISATION,ALERT,JOURNEE,
 }

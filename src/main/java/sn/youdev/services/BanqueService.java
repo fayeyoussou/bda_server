@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface BanqueService {
+    Banque getBanqueById(Long id) throws EntityNotFoundException;
     List<BanqueResponse> getBanqueList();
     BanqueResponse addBanque(BanqueRequete requete) throws EntityNotFoundException, ArgumentValidationExption;
     BanqueResponse editBanque(Long id,BanqueRequete requete) throws EntityNotFoundException;

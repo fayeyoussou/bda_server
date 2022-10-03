@@ -42,6 +42,7 @@ public class Constante {
     public static final String[] ADMIN_LIST = {
             "/api/user/**"
     };
+    public static  final  String PAS_VIDE= "ne peut être vide";
     public static final String[] CNTS_LIST = {
 
             "/api/donneur/**"

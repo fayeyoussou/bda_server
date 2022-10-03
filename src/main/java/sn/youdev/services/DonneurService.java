@@ -8,6 +8,7 @@ import sn.youdev.dto.request.DonneurRequest;
 import sn.youdev.dto.request.LoginRequest;
 import sn.youdev.dto.request.StringRequest;
 import sn.youdev.dto.response.DonneurResponse;
+import sn.youdev.model.Banque;
 import sn.youdev.model.Donneur;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @Service
 public interface DonneurService {
+
     Donneur findDonneur(String numero) throws EntityNotFoundException;
     DonneurResponse findByNumero(String numero) throws EntityNotFoundException;
     List<DonneurResponse> findAll();

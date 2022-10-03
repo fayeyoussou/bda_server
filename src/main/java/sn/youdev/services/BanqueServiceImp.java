@@ -35,7 +35,8 @@ public class BanqueServiceImp implements BanqueService {
         this.groupeRepo = groupeRepo;
         this.locaService = localisationRepo;
     }
-    private Banque getBanqueById(Long id) throws EntityNotFoundException {
+    @Override
+    public Banque getBanqueById(Long id) throws EntityNotFoundException {
         return banqueRepo.findById(id).orElseThrow(()->new EntityNotFoundException("banque "+id+" not found"));
     }
     @Override

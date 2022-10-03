@@ -12,4 +12,5 @@ public class DonResponse {
     private String date;
     private String resultat;
     private String banque;
+    private String etat;
 }
