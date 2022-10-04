@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public interface UserService extends UserDetailsService {
+    User getUserByRequest(HttpServletRequest request) throws UserNotFoundException;
     User findUser(Long id) throws UserNotFoundException;
     UserResponse findById (Long id) throws UserNotFoundException;
     UserReponseToken saveUser(RegisterRequest registerRequest, MultipartFile image, HttpServletRequest httpServletRequest) throws EntreeException, UserNotFoundException, RoleNotFoundException, IOException;

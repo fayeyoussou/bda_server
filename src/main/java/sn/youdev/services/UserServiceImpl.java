@@ -59,11 +59,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByRequest(HttpServletRequest request) throws UserNotFoundException {
+        UsernamePasswordAuthenticationToken userPA = (UsernamePasswordAuthenticationToken) request.getUserPrincipal();
+        UserResponse user = (UserResponse) userPA.getPrincipal();
+        return findUser(user.getId());
+    }
+
+    @Override
     public User findUser(Long id) throws UserNotFoundException {
         Optional<User> user =  repo.findById(id);
         if (user.isEmpty()) throw new UserNotFoundException("user not found");
         return user.get();
     }
+
 
     @Override
     public UserResponse findById(Long id) throws UserNotFoundException {
