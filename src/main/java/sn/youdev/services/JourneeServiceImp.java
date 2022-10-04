@@ -2,7 +2,6 @@ package sn.youdev.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.youdev.config.error.ArgumentValidationExption;
@@ -127,7 +126,7 @@ public class JourneeServiceImp implements JourneeService {
         User user = userService.getUserByRequest(httpServletRequest);
         if(user == journee.getOrganisateur()){
             journee.setCommentaire_organisateur(request.getValue());
-            return journee.response()
+            return journee.response();
         }else
             throw new EntreeException("vous n'etes pas l'organisateur de cette journee");
     }

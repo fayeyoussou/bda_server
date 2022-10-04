@@ -14,4 +14,5 @@ public interface DemandeRepo extends JpaRepository<Demande,Long> {
     List<Demande> findAllByDemandeur(User demandeur);
     Optional<Demande> findByReponse(Reponse reponse);
     Optional<Demande> findByDate(Date date);
+    List<Demande> findAllByEtatTrue();
 }
