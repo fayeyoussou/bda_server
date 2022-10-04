@@ -38,7 +38,7 @@ public class DonServiceImp implements DonService {
 
         this.resultatRepo = resultatRepo;
     }
-    private Don getDonById(String id) throws EntityNotFoundException {
+    public Don getDonById(String id) throws EntityNotFoundException {
         return repo.findById(id).orElseThrow(()->new EntityNotFoundException("Don non trouve dans la base"));
     }
 

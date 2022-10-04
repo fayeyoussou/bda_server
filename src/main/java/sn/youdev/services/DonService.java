@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 public interface DonService {
+    Don getDonById(String id) throws EntityNotFoundException;
     List<DonResponse> listAllDon();
     List<DonResponse> listDonDispo();
     List<DonResponse> listByDonneur(String numero) throws EntityNotFoundException;
