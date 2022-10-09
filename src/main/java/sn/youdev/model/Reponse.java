@@ -17,7 +17,7 @@ public class Reponse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 50)
-    private String Subject;
+    private String objet;
     @Column(columnDefinition = "TEXT",nullable = false)
     private String message;
     private Date date = new Date();

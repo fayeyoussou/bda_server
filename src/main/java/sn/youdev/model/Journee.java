@@ -31,7 +31,7 @@ public class Journee {
     @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "organisateur")
     private User organisateur;
-    @OneToMany(mappedBy = "journee",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "journee",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<JourneeDon> dons;
 
     public Journee(Date date_autorisation, Date date_journee, String commentaire_cnts, User organisateur) {
