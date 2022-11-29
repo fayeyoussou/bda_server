@@ -6,6 +6,6 @@ import sn.youdev.model.File;
 
 import java.util.Optional;
 @Repository
-public interface FileRepo extends JpaRepository<File,String> {
+public interface FileRepo extends JpaRepository<File,Long> {
     Optional<File> findByNom(String nom);
 }

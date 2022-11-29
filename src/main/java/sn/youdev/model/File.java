@@ -1,5 +1,6 @@
 package sn.youdev.model;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,11 +28,12 @@ import static sn.youdev.config.Constante.getExtension;
 @NoArgsConstructor
 @Table(name = "files")
 @Slf4j
+@Data
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true,nullable = false)
+    @Column(unique = true,nullable = false,length = 15)
     private String nom;
     private String description;
     @Column(nullable = false)
@@ -39,35 +42,32 @@ public class File {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     private User owner;
-    public File(MultipartFile multipartFile) throws IOException {
-        Path uploadDirectory = Paths.get(ASSETS+"/"+multipartFile.getContentType());
-        java.io.File theDir = uploadDirectory.toFile();
-        if (!theDir.exists()){
-            theDir.mkdirs();
-        }
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        InputStream inputStream = multipartFile.getInputStream();
-        this.nom = RandomStringUtils.randomAlphanumeric(8).toLowerCase();
-        this.type = multipartFile.getContentType();
-        this.dateUpload = new Date();
-        Path filePath = uploadDirectory.resolve(this.nom+getExtension(fileName));
-        Files.copy(inputStream,filePath, StandardCopyOption.REPLACE_EXISTING);
+    public File(List<String> fileInfo)  {
+
+            this.nom = fileInfo.get(0);
+            this.type = fileInfo.get(1);
+            this.dateUpload = new Date();
     }
     public File(MultipartFile multipartFile,String titre) throws IOException {
         this.description = titre;
-        Path uploadDirectory = Paths.get(ASSETS+"/"+multipartFile.getContentType());
+        Path uploadDirectory = Paths.get(ASSETS+"/images");
         java.io.File theDir = uploadDirectory.toFile();
-        if (!theDir.exists()){
-            theDir.mkdirs();
-        }
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        InputStream inputStream = multipartFile.getInputStream();
-        this.nom = RandomStringUtils.randomAlphanumeric(8).toLowerCase();
         this.type = multipartFile.getContentType();
         this.dateUpload = new Date();
+        this.nom = RandomStringUtils.randomAlphanumeric(8).toLowerCase();
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         Path filePath = uploadDirectory.resolve(this.nom+getExtension(fileName));
+//        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+//        System.out.println(multipartFile.getOriginalFilename()+" / "+multipartFile.getContentType());
+//        multipartFile.transferTo(new java.io.File(ASSETS+"/images/"+filePath));
+        InputStream inputStream = multipartFile.getInputStream();
         Files.copy(inputStream,filePath, StandardCopyOption.REPLACE_EXISTING);
+//        inputStream.close();
+
     }
+//    public String toString(){
+//        return "nom : " +nom+" type : "+type+" date upload : "+dateUpload;
+//    }
     public Integer deleteFile() throws IOException {
         AtomicReference<Integer> found = new AtomicReference<>( 0);
         Path uploadDirectory = Paths.get(ASSETS+"/"+this.type);

@@ -1,6 +1,6 @@
 package sn.youdev.services;
 
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.dto.request.BanqueRequete;
 import sn.youdev.dto.response.BanqueResponse;
@@ -12,7 +12,7 @@ import java.util.Map;
 public interface BanqueService {
     Banque getBanqueById(Long id) throws EntityNotFoundException;
     List<BanqueResponse> getBanqueList();
-    BanqueResponse addBanque(BanqueRequete requete) throws EntityNotFoundException, ArgumentValidationExption;
+    BanqueResponse addBanque(BanqueRequete requete) throws EntityNotFoundException, CustomArgumentValidationException;
     BanqueResponse editBanque(Long id,BanqueRequete requete) throws EntityNotFoundException;
     BanqueResponse getBanque(Long id) throws EntityNotFoundException;
     Boolean deleteBanque(Long id) throws EntityNotFoundException;

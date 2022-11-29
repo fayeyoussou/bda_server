@@ -26,6 +26,7 @@ public class Don {
     @ManyToOne(cascade = CascadeType.DETACH,fetch = FetchType.EAGER)
     @JoinColumn(name = "banque_id")
     private Banque banque;
+    @Column(nullable = false)
     private Date date = new Date();
     private EtatDon etat = EtatDon.DISPONIBLE;
     @OneToOne(mappedBy = "don",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -48,13 +49,13 @@ public class Don {
 
     public DonResponse getDonResponse(){
         DonResponse donResponse = new DonResponse();
-        donResponse.setBanque(this.banque.getNom());
+        donResponse.setBanque(banque == null ? "":banque.getNom());
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(this.date);
-        donResponse.setDate(calendar.get(Calendar.DAY_OF_MONTH)+"/"+calendar.get(Calendar.MONTH)+"/"+ calendar.get(Calendar.YEAR));
+        donResponse.setDate(this.date);
         donResponse.setNumero(this.numero);
         donResponse.setResult(this.resultat != null);
         donResponse.setEtat(this.etat.name());
+        donResponse.setResultat(this.resultat ==null? null : resultat.resultatResponse());
         return donResponse;
     }
 }

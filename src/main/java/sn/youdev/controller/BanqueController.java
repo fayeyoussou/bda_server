@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.dto.request.BanqueRequete;
 import sn.youdev.services.BanqueService;
@@ -32,7 +32,7 @@ public class BanqueController extends BaseController{
         return controllerResponse(banqueService.getBanque(id));
     }
     @PostMapping
-    public ResponseEntity<?> addBanque(@RequestBody final BanqueRequete requete) throws EntityNotFoundException, ArgumentValidationExption {
+    public ResponseEntity<?> addBanque(@RequestBody final BanqueRequete requete) throws EntityNotFoundException, CustomArgumentValidationException {
         try {
 
 

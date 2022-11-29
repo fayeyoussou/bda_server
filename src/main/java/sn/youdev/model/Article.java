@@ -1,5 +1,6 @@
 package sn.youdev.model;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,13 +22,16 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "articles")
+@Data
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private String titre;
+    private String description;
     private TypeArticle type;
+    private int vues = 0;
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 //    @Fetch(value = FetchMode.SUBSELECT)
     @JoinColumn(nullable = false,name = "auteur")
@@ -46,16 +50,23 @@ public class Article {
     public ArticleResponse response(){
         ArticleResponse articleResponse = new ArticleResponse();
         InfoPerso infoPerso = this.auteur.getInfoPerso();
-        String nom = infoPerso.getPrenom()+" "+infoPerso.getNom();
+        String nom = infoPerso ==null ? "" :infoPerso.getPrenom()+" "+infoPerso.getNom();
         articleResponse.setAuteur(nom);
         articleResponse.setDate_modification(this.dateModification);
         articleResponse.setDate_publication(this.datePublication);
-        articleResponse.setImage(this.image.getNom());
-        articleResponse.setDescription_image(this.image.getDescription());
+        articleResponse.setImage(this.image ==null ? "not found":this.image.getNom());
+        articleResponse.setDescription_image(this.image ==null || this.image.getDescription() ==null? "no description":this.image.getDescription());
+        articleResponse.setTitre(this.titre);
+        articleResponse.setDescription(description);
+        articleResponse.setVues(vues);
+        assert infoPerso != null;
+        articleResponse.setAuteurImage(infoPerso.getImage().getNom());
         List<SectionString> sectionStrings = new ArrayList<>();
-        for (Section section:this.sections
-             ) {
-            sectionStrings.add(new SectionString(section.getPosition(),section.getTitle(),section.getContenu()));
+        if(this.sections!=null) {
+            for (Section section : this.sections
+            ) {
+                sectionStrings.add(new SectionString(section.getPosition(), section.getTitle(), section.getContenu()));
+            }
         }
         articleResponse.setSections(sectionStrings);
         articleResponse.setId(this.id);

@@ -18,4 +18,8 @@ public class GroupeSanguin {
     private String groupe;
     @OneToMany(mappedBy = "groupeSanguin")
     private List<Donneur> donneurs;
+
+    public GroupeSanguin(String groupe) {
+        this.groupe = groupe;
+    }
 }

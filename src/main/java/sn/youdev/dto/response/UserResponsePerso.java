@@ -12,4 +12,6 @@ public class UserResponsePerso {
     private String nom;
     private String telephone;
     private String image;
+    private String numeroDonneur;
+    private String groupeSanguin;
 }

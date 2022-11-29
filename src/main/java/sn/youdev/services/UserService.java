@@ -16,7 +16,7 @@ public interface UserService extends UserDetailsService {
     User getUserByRequest(HttpServletRequest request) throws UserNotFoundException;
     User findUser(Long id) throws UserNotFoundException;
     UserResponse findById (Long id) throws UserNotFoundException;
-    UserReponseToken saveUser(RegisterRequest registerRequest, MultipartFile image, HttpServletRequest httpServletRequest) throws EntreeException, UserNotFoundException, RoleNotFoundException, IOException;
+    String saveUser(RegisterRequest registerRequest, MultipartFile image) throws EntreeException, UserNotFoundException, RoleNotFoundException, IOException;
     UserReponseToken enableUser(String token) throws TokenNotFoundException, EntreeException;
 
     List<UserResponse> findAllUser() throws UserNotFoundException;
@@ -31,5 +31,7 @@ public interface UserService extends UserDetailsService {
     String passwordResetRequest (String email,HttpServletRequest request) throws UserNotFoundException;
 
     User findByCredentials(String username) throws UserNotFoundException;
-    UserReponseToken getConnected(HttpServletRequest request);
+
+
+    UserReponseToken loginUser(LoginChangeRequest request) throws CustomArgumentValidationException;
 }

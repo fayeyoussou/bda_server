@@ -27,7 +27,7 @@ public class InfoPerso {
     private String cin;
     @Column(nullable = false,unique = true)
     private String telephone;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "numero_donneur")
     private Donneur numeroDonneur;
     @OneToOne(mappedBy = "infoPerso",cascade = CascadeType.ALL)

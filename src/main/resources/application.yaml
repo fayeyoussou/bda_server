@@ -2,13 +2,15 @@ spring:
   servlet:
     multipart:
       enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
   datasource:
     password:
     url: jdbc:mysql://127.0.0.1:3306/bda_dev
     username: root
   jpa:
     hibernate:
-      ddl_auto: update
+      ddl_auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect

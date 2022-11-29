@@ -6,6 +6,7 @@ import lombok.Setter;
 import sn.youdev.dto.response.BanqueResponse;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class Banque {
     @OneToMany(mappedBy = "banque",fetch = FetchType.LAZY)
     private List<BanqueUser> banqueUsers;
     @OneToMany(mappedBy = "banque",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private List<Reserve> reserves;
+    private List<Reserve> reserves = new ArrayList<>();
     private Boolean etat = true;
     public BanqueResponse response(){
         BanqueResponse response = new BanqueResponse();

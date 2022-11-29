@@ -119,12 +119,12 @@ public class DonneurServiceImp implements DonneurService {
         return true;
     }
     @Override
-    public Map<String, Object> saveWithExist(Long idInfo, String groupe) throws EntityNotFoundException, TestException {
+    public Map<String, Object> saveWithExist(Long idInfo, String groupe) throws  TestException {
         try{
             Map map = new HashMap<>();
         InfoPerso infos= infoRepo.findById(idInfo).orElseThrow(()->new EntityNotFoundException("info not found"));
-        log.info(infos.getPrenom());
-        log.info(infos.getUser().getLogin());
+//        log.info(infos.getPrenom());
+//        log.info(infos.getUser().getLogin());
         Donneur donneur = new Donneur();
         donneur.generateNumero();
         donneur.setGroupeSanguin(groupeRepo.findById(groupe).orElseThrow(()->new EntityNotFoundException("donneur non trouvé")));
@@ -133,7 +133,7 @@ public class DonneurServiceImp implements DonneurService {
         infos.setNumeroDonneur(donneur);
         infoRepo.save(infos);
         map.put("donneur_info",new DonneurResponse(donneur.getNumero(),infos.getPrenom(),infos.getNom(),donneur.getDateDernierDon(),true,donneur.getDons().size()));
-        map.put("user_info",infos.getUser().getResponse());
+        map.put("user_info",userRepo.findById(idInfo).get().getResponse());
         return map;
         }
         catch (Exception e){

@@ -1,5 +1,7 @@
 package sn.youdev.services;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sn.youdev.config.Constante;
+import sn.youdev.config.CustomValidator;
 import sn.youdev.config.error.*;
 import sn.youdev.dto.request.*;
 import sn.youdev.dto.response.UserReponseToken;
@@ -19,12 +22,10 @@ import sn.youdev.repository.*;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepo repo;
     private final InfoRepo infoRepo;
@@ -60,9 +61,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByRequest(HttpServletRequest request) throws UserNotFoundException {
-        UsernamePasswordAuthenticationToken userPA = (UsernamePasswordAuthenticationToken) request.getUserPrincipal();
-        UserResponse user = (UserResponse) userPA.getPrincipal();
-        return findUser(user.getId());
+        String header = request.getHeader("Authorization");
+        return tokenRepo.findByCode(header).orElseThrow(()->new UserNotFoundException("user not found")).getUser();
     }
 
     @Override
@@ -87,23 +87,25 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserReponseToken saveUser(RegisterRequest  registerRequest, MultipartFile image, HttpServletRequest httpServletRequest) throws EntreeException, IOException {
+    public String saveUser(RegisterRequest  registerRequest, MultipartFile image) throws EntreeException, IOException {
         verifyEntry(registerRequest);
         InfoPerso infoPerso = new InfoPerso();
         infoPerso.setInfoPerso(registerRequest);
         User user = new User();
         user.setLogin(registerRequest.getLogin());
-        user.setPassword(passwordEncoder.encode("passer123"));
+        String password = RandomStringUtils.randomAlphanumeric(7);
+        user.setPassword(passwordEncoder.encode(password));
         user.setInfoPerso(infoPerso);
-        File file = new File(image);
+        File file = new File(Constante.createFile(image));
         fileRepo.save(file);
-        Token token = new Token((byte) 0,user);
+        Token token = new Token(user);
         infoPerso.setImage(file);
         infoRepo.save(infoPerso);
         repo.save(user);
         file.setOwner(user);
         tokenRepo.save(token);
-        return new UserReponseToken(user.getResponse(),Constante.applicationUrl(httpServletRequest)+"/api/auth/enable/"+token.getCode());
+        System.out.println(token.getCode()+"/"+password);
+        return "code envoye par mail avec mot de passe";
     }
 
     @Transactional
@@ -114,6 +116,7 @@ public class UserServiceImpl implements UserService {
         User user = token.getUser();
         if(user.isEnabled()) throw new EntreeException("utilisateur deja active");
         user.setEnabled(true);
+        tokenRepo.delete(token);
         UserResponse userResponse = user.getResponse();
         Token tokenAccess = new Token((byte)1,user);
         tokenRepo.save(tokenAccess);
@@ -146,19 +149,26 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Boolean blockUser(Long id) throws UserNotFoundException {
-        findUser(id).setNonLocked(false);
+        User user = findUser(id);
+        user.setNonLocked(false);
+        tokenRepo.deleteAll(user.getTokens());
         return true;
     }
 
     @Transactional
     @Override
     public UserResponse addBanqueRole(Long id, Long banque_id) throws RoleNotFoundException, UserNotFoundException, EntreeException, BanqueNotFoundException {
-        Role role = roleRepo.findByNomIgnoreCase("banque").orElseThrow(()->new RoleNotFoundException("role banque found"));
-        User user =  findUser(id).addRoleToUser(role);
-        Banque banque = banqueRepo.findById(id).orElseThrow(()->new BanqueNotFoundException("banque not found"));
-        BanqueUser banqueUser = new BanqueUser(banque,user);
-        banqueUserRepo.save(banqueUser);
-        return user.getResponse();
+        try {
+            Role role = roleRepo.findByNomIgnoreCase("banque").orElseThrow(() -> new RoleNotFoundException("role banque found"));
+            User user = findUser(id).addRoleToUser(role);
+            Banque banque = banqueRepo.findById(banque_id).orElseThrow(() -> new BanqueNotFoundException("banque not found"));
+            BanqueUser banqueUser = new BanqueUser(banque, user);
+            banqueUserRepo.save(banqueUser);
+            return user.getResponse();
+        }catch (Exception e){
+            log.error(e.getClass().getSimpleName(),e);
+            throw new EntreeException(e.getMessage());
+        }
     }
 
     @Transactional
@@ -218,8 +228,8 @@ public class UserServiceImpl implements UserService {
         if(token1.getType()!= (byte)2) throw new EntreeException("not the correct type of token");
         User user = token1.getUser();
         user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+        tokenRepo.delete(token1);
         return user.getResponse();
-
     }
 
     @Override
@@ -237,12 +247,21 @@ public class UserServiceImpl implements UserService {
         return repo.findByLoginOrInfoPerso_Email(username,username).orElseThrow(()->new UserNotFoundException("user not found"));
     }
 
+
+
     @Override
-    public UserReponseToken getConnected(HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken userPA = (UsernamePasswordAuthenticationToken) request.getUserPrincipal();
-        UserResponse user = (UserResponse) userPA.getPrincipal();
-        String token = (String) userPA.getCredentials();
-        return new UserReponseToken(user,token);
+    public UserReponseToken loginUser(LoginChangeRequest request) throws CustomArgumentValidationException {
+        CustomValidator validator = new CustomValidator();
+        Map<String,String> errors = validator.validate(request);
+        if(errors.size()>0) throw new CustomArgumentValidationException(errors);
+        User user = repo.findByLoginOrInfoPerso_Email(request.getLogin(),request.getLogin()).orElse(null);
+        if(user == null || !passwordEncoder.matches(request.getPassword(),user.getPassword())) {
+            errors.put("login", "login ou password erroné");
+            throw new CustomArgumentValidationException(errors);
+        }
+        Token token = new Token((byte) 1,user);
+        tokenRepo.save(token);
+        return new UserReponseToken(user.getResponse(),token.getCode(),token.getExpiration());
     }
 
     @Override

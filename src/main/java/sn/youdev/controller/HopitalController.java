@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.dto.request.HopitalRequest;
 import sn.youdev.services.HopitalService;
@@ -38,7 +38,7 @@ public class HopitalController extends BaseController{
         }
     }
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody final HopitalRequest request) throws EntityNotFoundException, ArgumentValidationExption {
+    public ResponseEntity<?> save(@RequestBody final HopitalRequest request) throws EntityNotFoundException, CustomArgumentValidationException {
         try{
             return controllerResponse(service.saveHopital(request));
         }catch (Exception e){
@@ -47,7 +47,7 @@ public class HopitalController extends BaseController{
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<?>edit(@PathVariable("id") Long id, @RequestBody final HopitalRequest request) throws EntityNotFoundException, ArgumentValidationExption {
+    public ResponseEntity<?>edit(@PathVariable("id") Long id, @RequestBody final HopitalRequest request) throws EntityNotFoundException, CustomArgumentValidationException {
         try{
             return controllerResponse(service.editHopital(id,request));
         }catch (Exception e){

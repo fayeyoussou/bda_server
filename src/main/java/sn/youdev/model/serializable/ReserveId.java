@@ -1,13 +1,15 @@
 package sn.youdev.model.serializable;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import sn.youdev.model.Banque;
 import sn.youdev.model.GroupeSanguin;
 
+import javax.persistence.GeneratedValue;
 import java.io.Serializable;
 
-@Getter @Setter
+@Data
 public class ReserveId implements Serializable {
     private Long banque_id;
     private String groupe_id;

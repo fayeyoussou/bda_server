@@ -25,7 +25,6 @@ import org.springframework.web.context.request.async.AsyncRequestTimeoutExceptio
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import sn.youdev.config.Constante;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,8 +51,8 @@ public class RestResponseEntityExceptionHandler
     public ResponseEntity<?> Test(TestException e){
         return jsonResponse(false,e,400,e.getClass().getSimpleName());
     }
-    @ExceptionHandler(ArgumentValidationExption.class)
-    public ResponseEntity<?> ArgumentInvalid(ArgumentValidationExption arg){
+    @ExceptionHandler(CustomArgumentValidationException.class)
+    public ResponseEntity<?> ArgumentInvalid(CustomArgumentValidationException arg){
         return jsonResponse(false,arg.getErrors(),400,arg.getClass().getSimpleName());
     }
     @Override

@@ -15,11 +15,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static sn.youdev.config.Constante.jsonResponse;
+
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
     private final TokenRepo tokenRepo;
@@ -39,15 +40,19 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             if (tokenOptional.isEmpty()) throw new TokenNotFoundException("donnee non trouve se reconnecter");
             Token token = tokenOptional.get();
             if (token.getType()!=(byte)1) throw new EntreeException("token incorrect");
+            if(token.getExpiration().before(new Date())) throw new EntreeException("token expire");
             User user = token.getUser();
-            UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(user.getResponse(),token.getCode(),user.getAuthorities());
+            Map<String,String> map = new HashMap<>();
+            map.put("id",user.getId().toString());
+            map.put("token",token.getCode());
+            UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(user,map,user.getAuthorities());
 //            userToken.getCredentials()
             SecurityContextHolder.getContext().setAuthentication(userToken);
             chain.doFilter(request,response);
 
         } catch(Exception e){
+            response.setHeader("error",e.getMessage());
             chain.doFilter(request,response);
-            return ;
         }
     }
 }

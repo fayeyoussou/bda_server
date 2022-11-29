@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.dto.request.DonRequest;
 import sn.youdev.dto.request.ResultatRequest;
@@ -70,10 +70,8 @@ public class DonController extends BaseController{
         }
     }
     @PostMapping
-    public ResponseEntity<?> saveDon(@RequestParam Map<String,Object> req) throws ArgumentValidationExption, EntityNotFoundException {
+    public ResponseEntity<?> saveDon(@RequestBody DonRequest donRequest) throws CustomArgumentValidationException, EntityNotFoundException {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            DonRequest donRequest = mapper.convertValue(req, DonRequest.class);
             return controllerResponse(donService.saveDon(donRequest));
         }catch (Exception e){
             log.error(e.getClass().getSimpleName(),e);
@@ -81,10 +79,8 @@ public class DonController extends BaseController{
         }
     }
     @PostMapping("/result")
-    public ResponseEntity<?>saveResult(@RequestParam Map<String,Object> req) throws ArgumentValidationExption, EntityNotFoundException {
+    public ResponseEntity<?>saveResult(@RequestBody final ResultatRequest request) throws CustomArgumentValidationException, EntityNotFoundException {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            ResultatRequest request = mapper.convertValue(req, ResultatRequest.class);
             return controllerResponse(donService.saveResult(request));
         }catch (Exception e){
             log.error(e.getClass().getSimpleName(),e);
@@ -92,7 +88,7 @@ public class DonController extends BaseController{
         }
     }
     @PutMapping("/{numero}")
-    public ResponseEntity<?> editDon(@PathVariable final String numero,@RequestParam Map<String,Object> req) throws ArgumentValidationExption, EntityNotFoundException {
+    public ResponseEntity<?> editDon(@PathVariable final String numero,@RequestParam Map<String,Object> req) throws CustomArgumentValidationException, EntityNotFoundException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             DonRequest donRequest = mapper.convertValue(req, DonRequest.class);
@@ -113,7 +109,7 @@ public class DonController extends BaseController{
         }
     }
     @PutMapping("/resultat")
-    public ResponseEntity<?> changeResultat(@RequestParam Map<String,Object> req) throws ArgumentValidationExption, EntityNotFoundException {
+    public ResponseEntity<?> changeResultat(@RequestParam Map<String,Object> req) throws CustomArgumentValidationException, EntityNotFoundException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             ResultatRequest request = mapper.convertValue(req, ResultatRequest.class);

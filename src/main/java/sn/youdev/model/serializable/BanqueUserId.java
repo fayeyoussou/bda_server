@@ -11,7 +11,7 @@ import java.util.Objects;
 @Getter @Setter
 public class BanqueUserId implements Serializable {
     private Long banque_id;
-    private User user_id;
+    private Long user_id;
 
     @Override
     public boolean equals(Object obj) {

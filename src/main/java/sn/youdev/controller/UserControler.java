@@ -48,6 +48,7 @@ public class UserControler extends BaseController {
     }
     @GetMapping("/role/banque/{id}/{idBanque}")
     public ResponseEntity<?> addBanqueRole(@PathVariable("id") final Long id,@PathVariable("idBanque") final Long idBanque) throws UserNotFoundException, EntreeException, RoleNotFoundException, BanqueNotFoundException {
+        System.out.println("here");
         return controllerResponse(userService.addBanqueRole(id,idBanque),"role added");
     }
     @GetMapping("/role/cnts/{id}")
@@ -56,16 +57,16 @@ public class UserControler extends BaseController {
     }
     @PostMapping("/password")
     public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordRequest request,HttpServletRequest httpRequest) throws UserNotFoundException, EntreeException {
-        Long id = userService.getConnected(httpRequest).getId();
+        Long id = userService.getUserByRequest(httpRequest).getId();
         return controllerResponse(userService.changePassword(id,request),"password change");
     }
     @GetMapping("/get_credential")
-    public ResponseEntity<?> getCredential (HttpServletRequest request) {
-        return controllerResponse(userService.getConnected(request),"cred");
+    public ResponseEntity<?> getCredential (HttpServletRequest request) throws UserNotFoundException {
+        return controllerResponse(userService.getUserByRequest(request).getResponse(),"cred");
     }
     @DeleteMapping("/block/{id}")
     public ResponseEntity<?> blockUser(@PathVariable final Long id,HttpServletRequest request) throws UserNotFoundException {
-        boolean isAdmin = userService.getConnected(request).getRoles().contains("admin");
+        boolean isAdmin = userService.getUserByRequest(request).getRoles().contains("admin");
         if(!isAdmin) return jsonResponse(false,"seul l'admin a le droit de bloquer",404,"Unauthorized");
         return controllerResponse(userService.blockUser(id),"utilisateur bloqué");
     }

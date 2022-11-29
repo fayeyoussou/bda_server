@@ -15,6 +15,8 @@ public class UserResponse {
     private String prenom;
     private String nom;
     private List<String> roles;
+    private String image;
+    private boolean changePassword;
 //    private String email;
 
 }

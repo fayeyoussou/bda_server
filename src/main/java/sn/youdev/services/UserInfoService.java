@@ -16,11 +16,13 @@ import java.util.List;
 public interface UserInfoService {
     UserResponsePerso VoirProfilUser(HttpServletRequest request) throws UserNotFoundException;
     DonneurResponse VoirProfilDonneur(HttpServletRequest request) throws UserNotFoundException;
-    List<DonResponse> voisMesDons(HttpServletRequest request) throws UserNotFoundException;
+    List<DonResponse> voirMesDons(HttpServletRequest request) throws UserNotFoundException;
     DonResponse voirDon(HttpServletRequest request,String numero);
     UserReponseToken changeMailRequete(HttpServletRequest request, EmailRequest emailRequest);
     UserReponseToken changePhone(HttpServletRequest request,StringRequest stringWithPhone);
     UserResponse changeName(HttpServletRequest request, ChangeNameRequest requestChange);
     UserResponse changeLogin(HttpServletRequest request, LoginChangeRequest loginChangeRequest);
     UserResponse changeProfilImage(HttpServletRequest request, MultipartFile image);
+
+    String logout(HttpServletRequest request);
 }

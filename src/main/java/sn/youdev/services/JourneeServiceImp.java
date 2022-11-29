@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.config.error.EntreeException;
 import sn.youdev.config.error.UserNotFoundException;
@@ -82,7 +82,7 @@ public class JourneeServiceImp implements JourneeService {
     }
 
     @Override
-    public List<DonResponse> addDonJournee(Long id, DonRequest request) throws ArgumentValidationExption, EntityNotFoundException {
+    public List<DonResponse> addDonJournee(Long id, DonRequest request) throws CustomArgumentValidationException, EntityNotFoundException {
         Journee journee = getJournee(id);
         DonResponse donResponse = donService.saveDon(request);
         Don don = donService.getDonById(donResponse.getNumero());
@@ -93,12 +93,13 @@ public class JourneeServiceImp implements JourneeService {
 
     @Override
     public ArticleResponse addArticleToJournee(Long id, ArticleRequest request,HttpServletRequest httpServletRequest) throws UserNotFoundException, IOException, EntityNotFoundException {
-        Journee journee = getJournee(id);
-        ArticleResponse articleResponse = articleService.addArticle(request,httpServletRequest);
-        Article article = articleService.getArticle(articleResponse.getId());
-        journee.setArticle(article);
-        repo.save(journee);
-        return articleResponse;
+//        Journee journee = getJournee(id);
+//        ArticleResponse articleResponse = articleService.addArticle(request,httpServletRequest,);
+//        Article article = articleService.getArticle(articleResponse.getId());
+//        journee.setArticle(article);
+//        repo.save(journee);
+//        return articleResponse;
+        return null;
     }
 
     @Override

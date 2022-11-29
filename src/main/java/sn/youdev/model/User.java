@@ -26,6 +26,7 @@ public class User implements UserDetails {
     private String login;
     @Column(nullable = false)
     private String password;
+    private boolean changePassword = true;
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -110,6 +111,6 @@ public class User implements UserDetails {
                 roles.add(role.getNom());
             }
         }
-        return new UserResponse(this.id,this.login, infoPerso.getPrenom(),infoPerso.getNom(),roles);
+        return new UserResponse(this.id,this.login, infoPerso.getPrenom(),infoPerso.getNom(),roles,infoPerso.getImage().getNom(),this.changePassword);
     }
 }

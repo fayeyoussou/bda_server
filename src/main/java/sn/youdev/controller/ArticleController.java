@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.config.error.EntreeException;
 import sn.youdev.config.error.UserNotFoundException;
@@ -17,6 +18,7 @@ import sn.youdev.services.ArticleService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,18 +32,25 @@ public class ArticleController extends BaseController{
     }
     @PostMapping
     public ResponseEntity<?> addArticle(
-            @RequestParam(value = "image") MultipartFile image,
+            @RequestParam(value = "image",required = false) MultipartFile image,
             @RequestParam Map<String,Object> req,
             HttpServletRequest request
-    ) throws UserNotFoundException, IOException {
+    ) throws UserNotFoundException, IOException, EntityNotFoundException, CustomArgumentValidationException {
         ObjectMapper mapper = new ObjectMapper();
         ArticleRequest articleRequest = mapper.convertValue(req, ArticleRequest.class);
-        articleRequest.setImage(image);
-        return controllerResponse(service.addArticle(articleRequest,request));
+        return controllerResponse(service.addArticle(articleRequest,request,image));
     }
     @GetMapping
     public ResponseEntity<?> getArticle(){
         return controllerResponse(service.listArticle());
+    }
+    @GetMapping("/vues/{id}")
+    public ResponseEntity<?> addVues(@PathVariable Long id) throws EntityNotFoundException {
+        return controllerResponse(service.addVues(id));
+    }
+    @PostMapping("/sections/{id}")
+    public ResponseEntity<?> addSectionsToNewArticle(@PathVariable Long id ,@RequestBody final List<SectionString> sectionStrings) throws EntityNotFoundException {
+        return  controllerResponse(service.addSections(id,sectionStrings));
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getArticleById(@PathVariable final Long id) throws EntreeException, EntityNotFoundException {

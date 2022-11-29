@@ -12,23 +12,29 @@ import sn.youdev.dto.request.StringRequest;
 import sn.youdev.dto.response.*;
 import sn.youdev.model.Don;
 import sn.youdev.model.InfoPerso;
+import sn.youdev.model.Token;
 import sn.youdev.model.User;
+import sn.youdev.repository.TokenRepo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserInfoServiceImp implements UserInfoService {
     private final UserService userService;
+    private final TokenRepo tokenRepo;
 
     @Autowired
-    public UserInfoServiceImp(UserService userService) {
+    public UserInfoServiceImp(UserService userService, TokenRepo tokenRepo) {
         this.userService = userService;
+        this.tokenRepo = tokenRepo;
     }
 
     @Override
     public UserResponsePerso VoirProfilUser(HttpServletRequest request) throws UserNotFoundException {
-        User user =userService.findUser(userService.getConnected(request).getId());
+        User user =userService.getUserByRequest(request);
         UserResponsePerso userResponsePerso = new UserResponsePerso();
         InfoPerso infos = user.getInfoPerso();
         userResponsePerso.setEmail(infos.getEmail());
@@ -36,19 +42,23 @@ public class UserInfoServiceImp implements UserInfoService {
         userResponsePerso.setPrenom(infos.getPrenom());
         userResponsePerso.setNom(infos.getNom());
         userResponsePerso.setTelephone(infos.getTelephone());
-        userResponsePerso.setImage(Constante.applicationUrl(request)+"/api/file/"+infos.getImage().getNom());
+        userResponsePerso.setImage(infos.getImage().getNom());
+        if(infos.getNumeroDonneur() != null) {
+            userResponsePerso.setNumeroDonneur(infos.getNumeroDonneur().getNumero());
+            userResponsePerso.setGroupeSanguin(infos.getNumeroDonneur().getGroupeSanguin().getGroupe());
+        }
         return userResponsePerso;
     }
 
     @Override
     public DonneurResponse VoirProfilDonneur(HttpServletRequest request) throws UserNotFoundException {
-        User user =userService.findUser(userService.getConnected(request).getId());
+        User user =userService.findUser(userService.getUserByRequest(request).getId());
         return user.getInfoPerso().getNumeroDonneur().getDonneurResponse();
     }
 
     @Override
-    public List<DonResponse> voisMesDons(HttpServletRequest request) throws UserNotFoundException {
-        User user =userService.findUser(userService.getConnected(request).getId());
+    public List<DonResponse> voirMesDons(HttpServletRequest request) throws UserNotFoundException {
+        User user =userService.findUser(userService.getUserByRequest(request).getId());
         List<Don> dons = user.getInfoPerso().getNumeroDonneur().getDons();
 
         List<DonResponse> donResponses = new ArrayList<>();
@@ -89,5 +99,17 @@ public class UserInfoServiceImp implements UserInfoService {
     @Override
     public UserResponse changeProfilImage(HttpServletRequest request, MultipartFile image) {
         return null;
+    }
+
+    @Override
+    public String logout(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        Optional<Token> token = tokenRepo.findByCode(header);
+        //        token.ifPresent(tokenRepo::delete);
+        if(token.isPresent()) {
+            tokenRepo.delete(token.get());
+            return "deleted";
+        }
+        return "token not found";
     }
 }

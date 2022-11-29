@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.youdev.config.CustomValidator;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.dto.request.HopitalRequest;
 import sn.youdev.dto.response.HopitalResponse;
@@ -49,9 +49,9 @@ public class HopitalServiceImp implements HopitalService {
     }
 
     @Override
-    public HopitalResponse saveHopital(HopitalRequest request) throws EntityNotFoundException, ArgumentValidationExption {
+    public HopitalResponse saveHopital(HopitalRequest request) throws EntityNotFoundException, CustomArgumentValidationException {
         Map<String,String> erros = new CustomValidator().validate(request);
-        if (erros.size()>0) throw new ArgumentValidationExption(erros);
+        if (erros.size()>0) throw new CustomArgumentValidationException(erros);
         Hopital hopital = new Hopital();
         hopital.setLocalisation(localisationService.getLocalisation(request.getLocalisation()));
         hopital.setTelephone(request.getTelephone());
@@ -62,9 +62,9 @@ public class HopitalServiceImp implements HopitalService {
 
     @Transactional
     @Override
-    public HopitalResponse editHopital(Long id, HopitalRequest request) throws EntityNotFoundException, ArgumentValidationExption {
+    public HopitalResponse editHopital(Long id, HopitalRequest request) throws EntityNotFoundException, CustomArgumentValidationException {
         Map<String,String> erros = new CustomValidator().validate(request);
-        if (erros.size()>0) throw new ArgumentValidationExption(erros);
+        if (erros.size()>0) throw new CustomArgumentValidationException(erros);
         Hopital hopital = getHopital(id);
         hopital.setLocalisation(localisationService.getLocalisation(request.getLocalisation()));
         hopital.setTelephone(request.getTelephone());

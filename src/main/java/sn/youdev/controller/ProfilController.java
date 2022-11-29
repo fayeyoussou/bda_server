@@ -29,4 +29,12 @@ public class ProfilController extends BaseController{
     public ResponseEntity<?>getDonneur(HttpServletRequest request) throws UserNotFoundException {
         return controllerResponse(service.VoirProfilDonneur(request));
     }
+    @GetMapping("/logout")
+    public ResponseEntity<?>logout(HttpServletRequest request) {
+        return controllerResponse(service.logout(request));
+    }
+    @GetMapping("/dons")
+    public ResponseEntity<?> voirMesDons(HttpServletRequest request) throws UserNotFoundException{
+        return controllerResponse(service.voirMesDons(request));
+    }
 }

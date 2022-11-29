@@ -3,8 +3,9 @@ package sn.youdev.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sn.youdev.config.Constante;
 import sn.youdev.config.CustomValidator;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.config.error.EntreeException;
 import sn.youdev.dto.request.DonRequest;
@@ -88,27 +89,28 @@ public class DonServiceImp implements DonService {
         if (don.getResultat()==null) return null;
         return don.getResultat().resultatResponse();
     }
-    private void validate(Object donRequest) throws ArgumentValidationExption {
+    private void validate(Object donRequest) throws CustomArgumentValidationException {
         CustomValidator validator = new CustomValidator();
         Map<String,String> errors = validator.validate(donRequest);
-       if(errors.size()>0)throw new ArgumentValidationExption(errors);
+       if(errors.size()>0)throw new CustomArgumentValidationException(errors);
     }
     @Override
-    public DonResponse saveDon(DonRequest donRequest) throws ArgumentValidationExption, EntityNotFoundException {
+    public DonResponse saveDon(DonRequest donRequest) throws CustomArgumentValidationException, EntityNotFoundException {
         CustomValidator validator = new CustomValidator();
         Map<String,String> errors = validator.validate(donRequest);
-        if(errors.size()>0)throw new ArgumentValidationExption(errors);
+        if(errors.size()>0)throw new CustomArgumentValidationException(errors);
         Donneur donneur = donneurService.findDonneur(donRequest.getDonneur());
         Banque banque;
         if(donRequest.getBanque()==null) banque = null;
         else banque = banqueService.getBanqueById(donRequest.getBanque());
         Don don = new Don(donRequest.getObservation(),donneur,banque,donRequest.getDate());
+        don.setNumero(Constante.generateNumero("DN"));
         repo.save(don);
         return don.getDonResponse();
     }
 
     @Override
-    public Object saveResult(ResultatRequest request) throws ArgumentValidationExption, EntityNotFoundException {
+    public Object saveResult(ResultatRequest request) throws CustomArgumentValidationException, EntityNotFoundException {
         Resultat resultat = new Resultat();
         validate(request);
         resultat.setDon(getDonById(request.getDon()));
@@ -123,7 +125,7 @@ public class DonServiceImp implements DonService {
     }
     @Transactional
     @Override
-    public DonResponse editDon(String numero,DonRequest request) throws ArgumentValidationExption, EntityNotFoundException {
+    public DonResponse editDon(String numero,DonRequest request) throws CustomArgumentValidationException, EntityNotFoundException {
         validate(request);
         Don don = getDonById(numero);
         Donneur donneur = donneurService.findDonneur(request.getDonneur());
@@ -145,7 +147,7 @@ public class DonServiceImp implements DonService {
     }
     @Transactional
     @Override
-    public ResultatResponse editResultat(ResultatRequest request) throws EntityNotFoundException, ArgumentValidationExption, EntreeException {
+    public ResultatResponse editResultat(ResultatRequest request) throws EntityNotFoundException, CustomArgumentValidationException, EntreeException {
         Don don = getDonById(request.getDon());
         validate(request);
         Resultat resultat = don.getResultat();

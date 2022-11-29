@@ -31,7 +31,7 @@ public class RegisterRequest {
     private String cin;
     @NotNull(message = "ne doit pas être vide")
     @Pattern(regexp = "^(?!.*  .*)[\\d+() ]{9,20}$", message = "ne doit contenir que des chiffres , des parentheses et plus")
-    @Length(min = 9,max = 20)
+    @Length(min = 7,max = 30)
     private String telephone;
     @NotNull(message = "ne doit pas être vide")
     @Length(min = 5,max = 20,message = "la taille de caractère doit être entre 5 et 20")

@@ -12,12 +12,16 @@ public class ArticleResponse {
     private Long id;
     private String image;
     private String description_image;
+    private String titre;
+    private String description;
     private String type;
     private String auteur;
+    private String auteurImage;
     private List<SectionString> sections;
     private Date date_publication;
     private Date date_modification;
+    private int vues;
     public ArticleResponseList liste(){
-        return new ArticleResponseList(id,type,auteur,date_publication);
+        return new ArticleResponseList(id,image ,titre,description,type,auteur,date_publication);
     }
 }

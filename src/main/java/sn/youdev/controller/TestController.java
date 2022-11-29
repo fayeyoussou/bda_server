@@ -1,5 +1,6 @@
 package sn.youdev.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import static sn.youdev.config.Constante.getExtension;
 
 @RestController
 @RequestMapping("/api/test")
+@Slf4j
 public class TestController {
     private final TestService testService;
 
@@ -31,18 +33,27 @@ public class TestController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> upload(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "file",required = false) MultipartFile file,
             @RequestParam Map<String, Object> allRequest
     ) throws IOException {
-        System.out.println(allRequest.get("prenom"));
-        Map<String,Object> map = new HashMap<>();
-        map.put("fileName",file.getOriginalFilename());
-        map.put("name",file.getName());
-        map.put("content-type",file.getContentType());
-        map.put("size",file.getSize());
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        map.put("result",testService.uploadFile(getExtension(fileName),file));
-        return ResponseEntity.ok(allRequest);
+        try {
+            if (file ==null) {
+                Map<String, String>map =new HashMap<>();
+                map.put("file","file not found");
+            }
+            System.out.println(allRequest.get("prenom"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("fileName", file.getOriginalFilename());
+            map.put("name", file.getName());
+            map.put("content-type", file.getContentType());
+            map.put("size", file.getSize());
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+            map.put("result", testService.uploadFile(file));
+            return ResponseEntity.ok(map);
+        }catch (Exception e){
+            log.error(e.getClass().getSimpleName(),e);
+            throw e;
+        }
     }
     @GetMapping("/download/{fileCode}")
     public ResponseEntity<?> download(@PathVariable final String fileCode) throws IOException {

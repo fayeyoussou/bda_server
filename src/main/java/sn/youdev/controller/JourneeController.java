@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.config.error.EntreeException;
 import sn.youdev.config.error.UserNotFoundException;
@@ -46,7 +46,7 @@ public class JourneeController extends BaseController{
         return controllerResponse(service.addJournee(request));
     }
     @PostMapping("/don/{id}")
-    public ResponseEntity<?> addDonJournee(@PathVariable("id") final Long id,@RequestBody @Valid final DonRequest request) throws ArgumentValidationExption, EntityNotFoundException {
+    public ResponseEntity<?> addDonJournee(@PathVariable("id") final Long id,@RequestBody @Valid final DonRequest request) throws CustomArgumentValidationException, EntityNotFoundException {
         return controllerResponse(service.addDonJournee(id,request));
     }
     @PostMapping("/article/{id}")
@@ -57,7 +57,7 @@ public class JourneeController extends BaseController{
             HttpServletRequest httpServletRequest) throws UserNotFoundException, IOException, EntityNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
         ArticleRequest articleRequest = mapper.convertValue(req, ArticleRequest.class);
-        articleRequest.setImage(image);
+//        articleRequest.setImage(image);
         return controllerResponse(service.addArticleToJournee(id,articleRequest,httpServletRequest));
     }
     @GetMapping("/{id}")

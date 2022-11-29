@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.youdev.config.CustomValidator;
-import sn.youdev.config.error.ArgumentValidationExption;
+import sn.youdev.config.error.CustomArgumentValidationException;
 import sn.youdev.config.error.EntityNotFoundException;
 import sn.youdev.dto.request.BanqueRequete;
 import sn.youdev.dto.response.BanqueResponse;
@@ -16,6 +16,7 @@ import sn.youdev.repository.BanqueRepo;
 import sn.youdev.repository.GroupeRepo;
 import sn.youdev.repository.ReserveRepo;
 
+import javax.persistence.GeneratedValue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,13 +50,14 @@ public class BanqueServiceImp implements BanqueService {
         return banqueResponses;
     }
 
+    @GeneratedValue
     @Override
-    public BanqueResponse addBanque(BanqueRequete requete) throws EntityNotFoundException, ArgumentValidationExption {
+    public BanqueResponse addBanque(BanqueRequete requete) throws EntityNotFoundException, CustomArgumentValidationException {
         Map <String,String> map= validator.validate(requete);
         if(banqueRepo.findByNomIgnoreCase(requete.getNom()).isPresent()) {
             map.put("nom","le nom existe deja");
         }
-        if (map.size()>0) throw new ArgumentValidationExption(map);
+        if (map.size()>0) throw new CustomArgumentValidationException(map);
 
         Localisation localisation = (Localisation) locaService.getLocalisation(requete.getLocalisation());
         Banque banque = new Banque();
@@ -67,11 +69,14 @@ public class BanqueServiceImp implements BanqueService {
         List<GroupeSanguin> groupeSanguins = groupeRepo.findAll();
         for (GroupeSanguin group:groupeSanguins
              ) {
+            System.out.println("-------> "+group.getGroupe());
             Reserve reserve = new Reserve(group,banque);
             reserveRepo.save(reserve);
             reserves.add(reserve);
         }
-        banque.setReserves(reserves);
+
+//        banque.setReserves(reserves);
+        BanqueResponse banqueResponse = banque.response();
         return banque.response();
     }
     @Transactional
