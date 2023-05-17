@@ -10,11 +10,11 @@
     </parent>
     <groupId>sn.youdev</groupId>
     <artifactId>bda_server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>bda_server</name>
     <description>bda_server</description>
     <properties>
-        <java.version>18</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -65,7 +65,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <distributionManagement>
+        <repository>
+            <id>nexusReleases</id>
+            <name>Releases</name>
+            <url>http://localhost:8081/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexusSnapshots</id>
+            <name>Snapshots</name>
+            <url>http://localhost:8081/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <scm>
+        <connection>scm:git:https://github.com/fayeyoussou/bda_server.git</connection>
+        <developerConnection>scm:git:https://github.com/fayeyoussou/bda_server.git</developerConnection>
+        <url>https://github.com/fayeyoussou/bda_server</url>
+    </scm>
     <build>
         <plugins>
             <plugin>
